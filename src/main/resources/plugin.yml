@@ -1,0 +1,6 @@
+name: MC-Telegram-Auth-Plugin
+version: ${pluginVersion}
+main: auth.plugin.mc.McTelegramAuthPlugin
+description: 'Plugin for authorization on a minecraft server using a telegram bot'
+api-version: 1.21
+authors: [hottabych04, GhostOfEndless]
