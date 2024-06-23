@@ -4,3 +4,10 @@ main: auth.plugin.mc.McTelegramAuthPlugin
 description: 'Plugin for authorization on a minecraft server using a telegram bot'
 api-version: 1.21
 authors: [hottabych04, GhostOfEndless]
+
+commands:
+  login:
+    description: 'Command for login on server'
+    aliases:
+      - 'l'
+      - 'log'
