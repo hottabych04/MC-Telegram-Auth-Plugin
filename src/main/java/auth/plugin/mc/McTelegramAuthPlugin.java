@@ -1,7 +1,7 @@
 package auth.plugin.mc;
 
-import auth.plugin.mc.commands.executors.LoginExecutor;
-import auth.plugin.mc.listeners.PlayerMainListener;
+import auth.plugin.mc.commands.executors.LoginCommand;
+import auth.plugin.mc.listeners.LoginMainListener;
 import auth.plugin.mc.managers.LoginManager;
 import lombok.Getter;
 import org.bukkit.plugin.PluginManager;
@@ -17,21 +17,19 @@ public class McTelegramAuthPlugin extends JavaPlugin {
         loginManager = new LoginManager();
         setupListeners();
         setupCommands();
-        getServer().getConsoleSender().sendMessage("[" + getName() + "] Test first message on enable" );
     }
 
     private void setupListeners() {
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvents(new PlayerMainListener(this), this);
+        pm.registerEvents(new LoginMainListener(this), this);
     }
 
     private void setupCommands(){
-        getCommand("login").setExecutor(new LoginExecutor(this));
+        getCommand("login").setExecutor(new LoginCommand(this));
     }
 
     @Override
     public void onDisable() {
-        getServer().getConsoleSender().sendMessage("[" + getName() + "] Test first message on disable" );
     }
 
 }
