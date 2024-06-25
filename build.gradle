@@ -27,6 +27,21 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT'
 }
 
+jar {
+    setArchiveBaseName 'TelegramAuthPlugin'
+}
+
+task deployPlugin(type: Copy){
+    from(jar.archiveFile.get())
+    into("\\\\WIN-E1GNAVMGMM5\\Server 1.21\\plugins")
+}
+
+jar.finalizedBy deployPlugin
+
+tasks.withType(JavaCompile) {
+    options.encoding = "UTF-8"
+}
+
 processResources {
     filesMatching('plugin.yml') {
         expand 'pluginVersion': project.version
