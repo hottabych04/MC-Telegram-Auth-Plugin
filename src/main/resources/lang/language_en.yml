@@ -1,0 +1,8 @@
+Messages:
+  main-message:
+    before:
+      register: "Click me for register..."
+      login: "Click me for login..."
+    after:
+      register: "Register success!"
+      login: "Login success!"

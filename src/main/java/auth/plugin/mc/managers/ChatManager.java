@@ -1,5 +1,7 @@
 package auth.plugin.mc.managers;
 
+import auth.plugin.mc.chat.Messages;
+import auth.plugin.mc.settings.Settings;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -16,7 +18,7 @@ public class ChatManager {
 
     public void sendRegisterMessage(){
         BaseComponent component = new ComponentBuilder()
-                .append("Click me for register!")
+                .append((String) Settings.SETTINGS.get(Messages.BEFORE_REGISTER.getKey()))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/login"))
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Link to the Telegram bot for registration")))
                 .color(ChatColor.AQUA)
@@ -32,7 +34,7 @@ public class ChatManager {
 
     public void sendLoginMessage(){
         BaseComponent component = new ComponentBuilder()
-                .append("Click me for login!")
+                .append((String) Settings.SETTINGS.get(Messages.BEFORE_LOGIN.getKey()))
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/login"))
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Link to the Telegram bot for login")))
                 .color(ChatColor.AQUA)
@@ -43,8 +45,8 @@ public class ChatManager {
     }
 
     public void sendSuccessLoginMessage(){
-        player.sendMessage("§eLogin success...");
-        player.sendTitle("Welcome!", "Your login success", 10, 70, 20);
+        player.sendMessage((String) Settings.SETTINGS.get(Messages.AFTER_LOGIN.getKey()));
+//        player.sendTitle("Welcome!", "Your login success", 10, 70, 20);
     }
 
     private void sendComponent(BaseComponent component){

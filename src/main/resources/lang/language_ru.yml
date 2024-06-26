@@ -1,0 +1,8 @@
+Messages:
+  main-message:
+    before:
+      register: "Нажми на меня для регистраци..."
+      login: "Нажми на меня для логина..."
+    after:
+      register: "Регистрация успешна!"
+      login: "Логин успешен!"

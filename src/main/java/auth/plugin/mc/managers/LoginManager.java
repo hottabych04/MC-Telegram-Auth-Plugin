@@ -25,5 +25,4 @@ public class LoginManager {
             return logged.contains(name);
         }
     }
-
 }
