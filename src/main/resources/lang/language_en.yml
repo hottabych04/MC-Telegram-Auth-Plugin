@@ -6,3 +6,31 @@ Messages:
     after:
       register: "Register success!"
       login: "Login success!"
+
+  main-title:
+    before:
+      register:
+        title: "Open chat"
+        subtitle: "for registration"
+        fadeIn: 10
+        stay: 70
+        fadeOut: 20
+      login:
+        title: "Open chat"
+        subtitle: "for login"
+        fadeIn: 10
+        stay: 70
+        fadeOut: 20
+    after:
+      register:
+        title: "Welcome"
+        subtitle: "registration success"
+        fadeIn: 10
+        stay: 70
+        fadeOut: 20
+      login:
+        title: "Welcome"
+        subtitle: "login success"
+        fadeIn: 10
+        stay: 70
+        fadeOut: 20

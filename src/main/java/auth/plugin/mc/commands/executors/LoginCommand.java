@@ -28,7 +28,7 @@ public class LoginCommand extends AbstractCommand {
         player.setWalkSpeed(0.2F);
         player.setFlySpeed(0.1F);
         ChatManager chatManager = new ChatManager(player);
-        chatManager.sendSuccessLoginMessage();
+        chatManager.sendAfterLoginMessage();
 
         return true;
     }

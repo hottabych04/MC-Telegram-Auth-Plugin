@@ -6,3 +6,31 @@ Messages:
     after:
       register: "Регистрация успешна!"
       login: "Логин успешен!"
+
+  main-title:
+    before:
+      register:
+        title: "Открой чат"
+        subtitle: "для регистрации"
+        fadeIn: 10
+        stay: 70
+        fadeOut: 20
+      login:
+        title: "Открой чат"
+        subtitle: "для логина"
+        fadeIn: 10
+        stay: 70
+        fadeOut: 20
+    after:
+      register:
+        title: "Добро пожаловать"
+        subtitle: "регистрация успешно пройдена"
+        fadeIn: 10
+        stay: 70
+        fadeOut: 20
+      login:
+        title: "Добро пожаловать"
+        subtitle: "логин успешно пройден"
+        fadeIn: 10
+        stay: 70
+        fadeOut: 20

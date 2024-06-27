@@ -28,7 +28,7 @@ public class LoginMainListener implements Listener {
         String name = player.getName();
         ChatManager chatManager = new ChatManager(player);
         if (!plugin.getLoginManager().isAuthenticated(name)){
-            chatManager.sendLoginMessage();
+            chatManager.sendBeforeLoginMessage();
             player.setWalkSpeed(0F);
             player.setFlySpeed(0F);
         }

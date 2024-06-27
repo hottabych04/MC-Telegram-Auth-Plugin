@@ -1,6 +1,7 @@
 package auth.plugin.mc;
 
 import auth.plugin.mc.chat.Messages;
+import auth.plugin.mc.chat.Title;
 import auth.plugin.mc.commands.executors.LoginCommand;
 import auth.plugin.mc.listeners.LoginMainListener;
 import auth.plugin.mc.managers.LoginManager;
@@ -56,9 +57,28 @@ public class McTelegramAuthPlugin extends JavaPlugin {
 
         YamlConfiguration messagesConfig = YamlConfiguration.loadConfiguration(messageFile);
         for (Messages message : Messages.values()){
-            String path = message.getKey();
-            Object obj = messagesConfig.get(path);
-            Messages.define(message, obj);
+
+            String property = message.getKey();
+            if (property.startsWith("Messages.main-title")) {
+                String title = "", subtitle = "";
+                int fadeIn = 0, stay = 0, fadeOut = 0;
+
+                if (messagesConfig.isSet(property + ".title") && messagesConfig.isSet(property + ".subtitle")) {
+                    title = messagesConfig.getString(property + ".title");
+                    subtitle = messagesConfig.getString(property + ".subtitle");
+                    fadeIn = messagesConfig.getInt(property + ".fadeIn");
+                    stay = messagesConfig.getInt(property + ".stay");
+                    fadeOut = messagesConfig.getInt(property + ".fadeOut");
+                } else {
+                    getServer().getConsoleSender().sendMessage("§cFailed to load Title " + property);
+                }
+
+                Messages.define(message, new Title(title, subtitle, fadeIn, stay, fadeOut));
+            } else {
+                String path = message.getKey();
+                Object obj = messagesConfig.get(path);
+                Messages.define(message, obj);
+            }
         }
     }
 
