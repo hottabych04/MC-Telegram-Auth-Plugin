@@ -6,6 +6,7 @@ import auth.plugin.mc.commands.executors.LoginCommand;
 import auth.plugin.mc.listeners.LoginMainListener;
 import auth.plugin.mc.managers.LoginManager;
 import auth.plugin.mc.settings.Settings;
+import io.javalin.Javalin;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -21,6 +22,7 @@ public class McTelegramAuthPlugin extends JavaPlugin {
     @Override
     public void onEnable() {
         loginManager = new LoginManager();
+        setupHttpClient();
         setupSettings();
         setupListeners();
         setupCommands();
@@ -80,6 +82,21 @@ public class McTelegramAuthPlugin extends JavaPlugin {
                 Messages.define(message, obj);
             }
         }
+    }
+
+    public void setupHttpClient(){
+        // Temporarily switch the plugin classloader to load Javalin.
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+
+        Thread.currentThread().setContextClassLoader(this.getClassLoader());
+        // Create a Javalin instance.
+        Javalin app = Javalin.create().start(8080);
+        // Restore default loader.
+        Thread.currentThread().setContextClassLoader(classLoader);
+        // The created instance can be used outside the class loader.
+        app.get("/", ctx -> ctx.result("Hello World!"));
+        // log
+        getLogger().info("JavalinPlugin is enabled");
     }
 
     @Override

@@ -1,4 +1,5 @@
 plugins {
+    id "com.github.johnrengelman.shadow" version "8.1.1"
     id 'java'
 }
 
@@ -24,19 +25,17 @@ dependencies {
     def lombok = 'org.projectlombok:lombok:1.18.32'
     compileOnly lombok
     annotationProcessor lombok
+
     compileOnly 'org.spigotmc:spigot-api:1.21-R0.1-SNAPSHOT'
+
+    implementation 'io.javalin:javalin:6.1.6'
+    implementation 'org.slf4j:slf4j-simple:2.0.13'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
 }
 
 jar {
     setArchiveBaseName 'TelegramAuthPlugin'
 }
-
-task deployPlugin(type: Copy){
-    from(jar.archiveFile.get())
-    into("\\\\WIN-E1GNAVMGMM5\\Server 1.21\\plugins")
-}
-
-jar.finalizedBy deployPlugin
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
@@ -47,3 +46,14 @@ processResources {
         expand 'pluginVersion': project.version
     }
 }
+
+shadowJar {
+    archiveBaseName.set('TelegramAuthPlugin')
+}
+
+task deployPlugin(type: Copy){
+    from(shadowJar.archiveFile.get())
+    into("\\\\WIN-E1GNAVMGMM5\\Server 1.21\\plugins")
+}
+
+shadowJar.finalizedBy deployPlugin
