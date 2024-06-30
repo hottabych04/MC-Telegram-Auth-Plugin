@@ -2,3 +2,11 @@
 #en - English
 #ru - Русский
 language: en
+
+#Cient port
+#Port that listen for Telegram server response
+client_port: 7070
+
+#Server for telegram
+server_ip: "192.168.10.71"
+server_port: 8085

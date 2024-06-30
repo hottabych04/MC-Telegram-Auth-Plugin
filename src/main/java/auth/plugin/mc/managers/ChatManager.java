@@ -2,6 +2,7 @@ package auth.plugin.mc.managers;
 
 import auth.plugin.mc.chat.Messages;
 import auth.plugin.mc.chat.Title;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -62,6 +63,10 @@ public class ChatManager {
                 title.stay,
                 title.fadeOut
         );
+    }
+
+    public static ChatManager getInstance(@NonNull Player player){
+        return new ChatManager(player);
     }
 
 }

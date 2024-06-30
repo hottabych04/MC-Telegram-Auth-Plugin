@@ -3,10 +3,11 @@ package auth.plugin.mc;
 import auth.plugin.mc.chat.Messages;
 import auth.plugin.mc.chat.Title;
 import auth.plugin.mc.commands.executors.LoginCommand;
+import auth.plugin.mc.http.HttpClient;
 import auth.plugin.mc.listeners.LoginMainListener;
+import auth.plugin.mc.listeners.PlayerJoinListener;
 import auth.plugin.mc.managers.LoginManager;
 import auth.plugin.mc.settings.Settings;
-import io.javalin.Javalin;
 import lombok.Getter;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.PluginManager;
@@ -18,12 +19,13 @@ import java.io.File;
 public class McTelegramAuthPlugin extends JavaPlugin {
 
     private LoginManager loginManager;
+    private HttpClient client;
 
     @Override
     public void onEnable() {
         loginManager = new LoginManager();
-        setupHttpClient();
         setupSettings();
+        setupHttpClient();
         setupListeners();
         setupCommands();
     }
@@ -31,6 +33,7 @@ public class McTelegramAuthPlugin extends JavaPlugin {
     private void setupListeners() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new LoginMainListener(this), this);
+        pm.registerEvents(new PlayerJoinListener(this), this);
     }
 
     private void setupCommands(){
@@ -85,18 +88,7 @@ public class McTelegramAuthPlugin extends JavaPlugin {
     }
 
     public void setupHttpClient(){
-        // Temporarily switch the plugin classloader to load Javalin.
-        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
-
-        Thread.currentThread().setContextClassLoader(this.getClassLoader());
-        // Create a Javalin instance.
-        Javalin app = Javalin.create().start(8080);
-        // Restore default loader.
-        Thread.currentThread().setContextClassLoader(classLoader);
-        // The created instance can be used outside the class loader.
-        app.get("/", ctx -> ctx.result("Hello World!"));
-        // log
-        getLogger().info("JavalinPlugin is enabled");
+        client = new HttpClient(this);
     }
 
     @Override

@@ -1,7 +1,6 @@
 package auth.plugin.mc.listeners;
 
 import auth.plugin.mc.McTelegramAuthPlugin;
-import auth.plugin.mc.managers.ChatManager;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -21,18 +20,6 @@ import org.bukkit.event.player.*;
 public class LoginMainListener implements Listener {
 
     private final McTelegramAuthPlugin plugin;
-
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent event){
-        Player player = event.getPlayer();
-        String name = player.getName();
-        ChatManager chatManager = new ChatManager(player);
-        if (!plugin.getLoginManager().isAuthenticated(name)){
-            chatManager.sendBeforeLoginMessage();
-            player.setWalkSpeed(0F);
-            player.setFlySpeed(0F);
-        }
-    }
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event){
