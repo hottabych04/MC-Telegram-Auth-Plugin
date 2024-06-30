@@ -31,6 +31,7 @@ dependencies {
     implementation 'io.javalin:javalin:6.1.6'
     implementation 'org.slf4j:slf4j-simple:2.0.13'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.1'
+    implementation 'com.squareup.okhttp3:okhttp:4.12.0'
 }
 
 jar {
