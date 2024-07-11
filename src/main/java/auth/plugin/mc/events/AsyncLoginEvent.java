@@ -5,16 +5,16 @@ import lombok.Getter;
 import org.bukkit.entity.Player;
 
 @Getter
-public class AsyncRegisterResponseEvent extends CustomEvent {
+public class AsyncLoginEvent extends CustomEvent {
 
     private final Player player;
 
-    private final String registrationUrl;
+    private final Account account;
 
-    public AsyncRegisterResponseEvent(Player player, String registerUrl){
+    public AsyncLoginEvent(Player player){
         super(true);
         this.player = player;
-        this.registrationUrl = registerUrl;
+        this.account = Account.buildByPlayer(player);
     }
 
 }

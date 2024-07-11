@@ -1,17 +1,17 @@
 package auth.plugin.mc.http;
 
 import auth.plugin.mc.McTelegramAuthPlugin;
-import auth.plugin.mc.events.AsyncLoginResponseEvent;
-import auth.plugin.mc.events.AsyncRegisterResponseEvent;
+import auth.plugin.mc.events.AsyncLoginEvent;
+import auth.plugin.mc.events.AsyncRegisterEvent;
 import auth.plugin.mc.model.Account;
 import auth.plugin.mc.settings.Settings;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import io.javalin.Javalin;
 import io.javalin.http.HttpStatus;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import okhttp3.*;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.concurrent.TimeUnit;
@@ -45,7 +45,7 @@ public class HttpClient {
             ObjectMapper objectMapper = new ObjectMapper();
             Account account = objectMapper.readValue(jsonResponse, Account.class);
             Player player = plugin.getServer().getPlayer(account.getUsername());
-            new AsyncLoginResponseEvent(player).callEvt(plugin);
+            new AsyncLoginEvent(player).callEvt(plugin);
             ctx.status(HttpStatus.OK);
             ctx.result("Json was accepted");
         });
@@ -55,7 +55,7 @@ public class HttpClient {
             ObjectMapper objectMapper = new ObjectMapper();
             Account account = objectMapper.convertValue(jsonResponse, Account.class);
             Player player = plugin.getServer().getPlayer(account.getUsername());
-            new AsyncRegisterResponseEvent(player).callEvt(plugin);
+            new AsyncRegisterEvent(player).callEvt(plugin);
             ctx.status(HttpStatus.OK);
             ctx.result("Json was accepted");
         });
@@ -66,18 +66,18 @@ public class HttpClient {
     @SneakyThrows
     public Response sendJoinPostRequest(Player player){
         String requestUrl = getHttpAddress(Settings.SERVER_IP.asString(""),
-                Settings.SERVER_PORT.asInt(8080));
+                Settings.SERVER_PORT.asInt(8080), "/api/v1/auth/join");
 
         MediaType mediaType = MediaType.get("application/json");
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 
         Account account = Account.builder()
                 .username(player.getName())
                 .uuid(player.getUniqueId().toString())
                 .build();
 
-        String json = objectMapper.writeValueAsString(account);
+        String json = ow.writeValueAsString(account);
 
         RequestBody body = RequestBody.create(json, mediaType);
 

@@ -17,27 +17,29 @@ public class ChatManager {
 
     private final Player player;
 
-    public void sendBeforeRegisterMessage(){
+    public void sendBeforeRegisterMessage(String regUrl){
         BaseComponent component = new ComponentBuilder()
                 .append(Messages.BEFORE_REGISTER.asString())
-                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/login"))
+                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, regUrl))
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Link to the Telegram bot for registration")))
                 .color(ChatColor.AQUA)
                 .bold(true)
                 .underlined(true)
                 .build();
         sendComponent(component);
+        sendTitle(Messages.TITLE_BEFORE_REGISTER.asTitle());
     }
 
     public void sendAfterRegisterMessage(){
         player.sendMessage(Messages.AFTER_REGISTER.asString());
+        sendTitle(Messages.TITLE_AFTER_REGISTER.asTitle());
     }
 
     public void sendBeforeLoginMessage(){
         BaseComponent component = new ComponentBuilder()
                 .append(Messages.BEFORE_LOGIN.asString())
                 .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/login"))
-                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Link to the Telegram bot for login")))
+                .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Link to the Telegram bot")))
                 .color(ChatColor.AQUA)
                 .bold(true)
                 .underlined(true)
