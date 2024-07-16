@@ -9,12 +9,9 @@ public class AsyncLoginEvent extends CustomEvent {
 
     private final Player player;
 
-    private final Account account;
-
     public AsyncLoginEvent(Player player){
         super(true);
         this.player = player;
-        this.account = Account.buildByPlayer(player);
     }
 
 }

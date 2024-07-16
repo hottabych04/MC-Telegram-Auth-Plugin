@@ -1,10 +1,7 @@
 package auth.plugin.mc.listeners;
 
 import auth.plugin.mc.McTelegramAuthPlugin;
-import auth.plugin.mc.events.AsyncJoinRequestEvent;
-import auth.plugin.mc.events.AsyncLoginEvent;
-import auth.plugin.mc.events.AsyncRegisterEvent;
-import auth.plugin.mc.events.AsyncRegisterResponseEvent;
+import auth.plugin.mc.events.*;
 import auth.plugin.mc.managers.ChatManager;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -14,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
+import java.io.IOException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -27,15 +25,12 @@ public class PlayerAuthListener implements Listener {
         boolean callEvt = new AsyncJoinRequestEvent(player).callEvt(plugin);
         if (!callEvt) { player.kickPlayer("Failed to call join request send event :(");}
         String name = player.getName();
-        ChatManager chatManager = ChatManager.getInstance(player);
         if (!plugin.getLoginManager().isAuthenticated(name)){
-//            chatManager.sendBeforeLoginMessage();
             player.setWalkSpeed(0F);
             player.setFlySpeed(0F);
         }
     }
 
-    @SneakyThrows
     @EventHandler
     public void onAsyncJoinRequestEvent(AsyncJoinRequestEvent event){
         Optional<String> regUrl;
@@ -45,30 +40,69 @@ public class PlayerAuthListener implements Listener {
             }
 
             regUrl = Optional.of(response.body().string());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        regUrl.ifPresent(s -> new AsyncRegisterResponseEvent(event.getPlayer(), s).callEvt(plugin));
+        regUrl.ifPresent(s -> {
+            if (!regUrl.get().equals("")){
+                new ChatManager(event.getPlayer()).sendBeforeRegisterMessage(s);
+            } else {
+                new ChatManager(event.getPlayer()).sendBeforeLoginMessage();
+            }
+        });
     }
 
     @EventHandler
     public void onAsyncRegisterResponseEvent(AsyncRegisterResponseEvent event){
         plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
-            new ChatManager(event.getPlayer()).sendBeforeRegisterMessage(event.getRegistrationUrl());
             return null;
         });
     }
 
     @EventHandler
     public void onAsyncLoginEvent(AsyncLoginEvent event){
+        Player player = event.getPlayer();
+
+        new AsyncAuthEvent(player).callEvt(plugin);
+
         plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
-            event.getPlayer().chat("/login");
+            new ChatManager(player).sendAfterLoginMessage();
             return null;
         });
     }
 
     @EventHandler
     public void onAsyncRegisterEvent(AsyncRegisterEvent event){
+        Player player = event.getPlayer();
 
+        new AsyncAuthEvent(player).callEvt(plugin);
+
+        plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
+            new ChatManager(player).sendAfterRegisterMessage();
+            return null;
+        });
+    }
+
+    @EventHandler
+    public void onAsyncAuthEvent(AsyncAuthEvent event){
+        Player player = event.getPlayer();
+
+        if (player == null || !player.isOnline()) return;
+
+        plugin.getLoginManager().setAuthenticated(player.getName());
+        player.setWalkSpeed(0.2F);
+        player.setFlySpeed(0.1F);
+    }
+
+    @EventHandler
+    public void onAsyncNotAuthEvent(AsyncNotAuthEvent event){
+        Player player = event.getPlayer();
+
+        plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
+            player.kickPlayer("Authorization is not success :(");
+            return null;
+        });
     }
 
 }

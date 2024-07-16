@@ -2,6 +2,7 @@ package auth.plugin.mc.http;
 
 import auth.plugin.mc.McTelegramAuthPlugin;
 import auth.plugin.mc.events.AsyncLoginEvent;
+import auth.plugin.mc.events.AsyncNotAuthEvent;
 import auth.plugin.mc.events.AsyncRegisterEvent;
 import auth.plugin.mc.model.Account;
 import auth.plugin.mc.settings.Settings;
@@ -10,10 +11,11 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import io.javalin.Javalin;
 import io.javalin.http.HttpStatus;
 import lombok.NonNull;
-import lombok.SneakyThrows;
 import okhttp3.*;
 import org.bukkit.entity.Player;
 
+import java.io.IOException;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class HttpClient {
@@ -40,33 +42,60 @@ public class HttpClient {
         // Restore default loader.
         Thread.currentThread().setContextClassLoader(classLoader);
         // The created instance can be used outside the class loader.
-        this.app.post("/login", ctx -> {
-            String jsonResponse = ctx.body();
-            ObjectMapper objectMapper = new ObjectMapper();
-            Account account = objectMapper.readValue(jsonResponse, Account.class);
-            Player player = plugin.getServer().getPlayer(account.getUsername());
-            new AsyncLoginEvent(player).callEvt(plugin);
-            ctx.status(HttpStatus.OK);
-            ctx.result("Json was accepted");
-        });
 
-        this.app.post("/register", ctx -> {
-            String jsonResponse = ctx.body();
-            ObjectMapper objectMapper = new ObjectMapper();
-            Account account = objectMapper.convertValue(jsonResponse, Account.class);
-            Player player = plugin.getServer().getPlayer(account.getUsername());
-            new AsyncRegisterEvent(player).callEvt(plugin);
-            ctx.status(HttpStatus.OK);
-            ctx.result("Json was accepted");
-        });
+
+        //Initialization endpoints for authentication
+        initLoginEndpoint();
+
+        initRegisterEndpoint();
+
+        initNotAuthEndpoint();
+
         // log
         plugin.getLogger().info("JavalinPlugin is enabled");
     }
 
-    @SneakyThrows
-    public Response sendJoinPostRequest(Player player){
+    private void initRegisterEndpoint(){
+        this.app.post("/register", ctx -> {
+            String jsonResponse = ctx.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            Account account = objectMapper.readValue(jsonResponse, Account.class);
+            Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
+            new AsyncRegisterEvent(player).callEvt(plugin);
+            ctx.status(HttpStatus.OK);
+            ctx.result("Json was accepted");
+        });
+    }
+
+    private void initLoginEndpoint(){
+        this.app.post("/login", ctx -> {
+            String jsonResponse = ctx.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            Account account = objectMapper.readValue(jsonResponse, Account.class);
+            Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
+            new AsyncLoginEvent(player).callEvt(plugin);
+            ctx.status(HttpStatus.OK);
+            ctx.result("Json was accepted");
+        });
+    }
+
+    private void initNotAuthEndpoint(){
+        this.app.post("/not/auth", ctx -> {
+            String jsonResponse = ctx.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            Account account = objectMapper.readValue(jsonResponse, Account.class);
+            Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
+            new AsyncNotAuthEvent(player).callEvt(plugin);
+            ctx.status(HttpStatus.OK);
+            ctx.result("Json was accepted");
+        });
+    }
+
+//    @SneakyThrows
+    public Response sendJoinPostRequest(Player player) throws IOException {
         String requestUrl = getHttpAddress(Settings.SERVER_IP.asString(""),
-                Settings.SERVER_PORT.asInt(8080), "/api/v1/auth/join");
+//                Settings.SERVER_PORT.asInt(8080), "/api/v1/auth/join");
+                Settings.SERVER_PORT.asInt(8080), "/");
 
         MediaType mediaType = MediaType.get("application/json");
 

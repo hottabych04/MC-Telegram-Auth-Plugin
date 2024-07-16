@@ -2,7 +2,6 @@ package auth.plugin.mc;
 
 import auth.plugin.mc.chat.Messages;
 import auth.plugin.mc.chat.Title;
-import auth.plugin.mc.commands.executors.LoginCommand;
 import auth.plugin.mc.http.HttpClient;
 import auth.plugin.mc.listeners.LoginMainListener;
 import auth.plugin.mc.listeners.PlayerAuthListener;
@@ -27,17 +26,12 @@ public class McTelegramAuthPlugin extends JavaPlugin {
         setupSettings();
         setupHttpClient();
         setupListeners();
-        setupCommands();
     }
 
     private void setupListeners() {
         PluginManager pm = getServer().getPluginManager();
         pm.registerEvents(new LoginMainListener(this), this);
         pm.registerEvents(new PlayerAuthListener(this), this);
-    }
-
-    private void setupCommands(){
-        getCommand("login").setExecutor(new LoginCommand(this));
     }
 
     private void setupSettings(){

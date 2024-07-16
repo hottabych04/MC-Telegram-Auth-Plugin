@@ -54,7 +54,7 @@ shadowJar {
 
 task deployPlugin(type: Copy){
     from(shadowJar.archiveFile.get())
-    into("\\\\WIN-E1GNAVMGMM5\\Server 1.21\\plugins")
+    into("\\\\WIN-E1GNAVMGMM5\\plugins")
 }
 
 shadowJar.finalizedBy deployPlugin
