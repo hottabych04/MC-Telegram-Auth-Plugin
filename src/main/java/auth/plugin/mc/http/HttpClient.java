@@ -85,17 +85,15 @@ public class HttpClient {
             ObjectMapper objectMapper = new ObjectMapper();
             Account account = objectMapper.readValue(jsonResponse, Account.class);
             Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
-            new AsyncNotAuthEvent(player).callEvt(plugin);
+            new AsyncNotAuthEvent(player, "Authorization is not success :(").callEvt(plugin);
             ctx.status(HttpStatus.OK);
             ctx.result("Json was accepted");
         });
     }
 
-//    @SneakyThrows
     public Response sendJoinPostRequest(Player player) throws IOException {
         String requestUrl = getHttpAddress(Settings.SERVER_IP.asString(""),
-//                Settings.SERVER_PORT.asInt(8080), "/api/v1/auth/join");
-                Settings.SERVER_PORT.asInt(8080), "/");
+                Settings.SERVER_PORT.asInt(8080), "/api/v1/auth/join");
 
         MediaType mediaType = MediaType.get("application/json");
 

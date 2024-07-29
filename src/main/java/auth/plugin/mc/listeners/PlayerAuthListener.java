@@ -4,7 +4,6 @@ import auth.plugin.mc.McTelegramAuthPlugin;
 import auth.plugin.mc.events.*;
 import auth.plugin.mc.managers.ChatManager;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import okhttp3.Response;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -36,16 +35,15 @@ public class PlayerAuthListener implements Listener {
         Optional<String> regUrl;
         try (Response response = plugin.getClient().sendJoinPostRequest(event.getPlayer())) {
             if (!response.isSuccessful()) {
-                event.getPlayer().kickPlayer("Dont have login response from telegram server :(");
+                new AsyncNotAuthEvent(event.getPlayer(), "Dont have login response from telegram server :(").callEvt(plugin);
             }
-
             regUrl = Optional.of(response.body().string());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
         regUrl.ifPresent(s -> {
-            if (!regUrl.get().equals("")){
+            if (!regUrl.get().isEmpty()){
                 new ChatManager(event.getPlayer()).sendBeforeRegisterMessage(s);
             } else {
                 new ChatManager(event.getPlayer()).sendBeforeLoginMessage();
@@ -55,9 +53,7 @@ public class PlayerAuthListener implements Listener {
 
     @EventHandler
     public void onAsyncRegisterResponseEvent(AsyncRegisterResponseEvent event){
-        plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
-            return null;
-        });
+        plugin.getServer().getScheduler().callSyncMethod(plugin, () -> null);
     }
 
     @EventHandler
@@ -100,7 +96,7 @@ public class PlayerAuthListener implements Listener {
         Player player = event.getPlayer();
 
         plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
-            player.kickPlayer("Authorization is not success :(");
+            player.kickPlayer(event.getErrMsg());
             return null;
         });
     }
