@@ -16,7 +16,7 @@ public enum Settings {
             8080),
 
     SERVER_IP("server_ip",
-            "0.0.0.0"),
+            "127.0.0.1"),
 
     SERVER_PORT("server_port",
             8080);

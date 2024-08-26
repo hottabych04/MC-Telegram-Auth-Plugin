@@ -8,5 +8,5 @@ language: en
 client_port: 7070
 
 #Auth server
-server_ip: "192.168.10.71"
+server_ip: "192.168.10.72"
 server_port: 8080

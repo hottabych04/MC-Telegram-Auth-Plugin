@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 
 @NoArgsConstructor
-public class CustomEvent extends Event {
+public abstract class CustomEvent extends Event {
 
     @Getter
     private static final HandlerList handlerList = new HandlerList();

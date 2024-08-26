@@ -9,6 +9,12 @@ Messages:
 
   main-title:
     before:
+      all:
+        title: "Пожалуйста подождите"
+        subtitle: "авторизация в процессе..."
+        fadeIn: 10
+        stay: 70
+        fadeOut: 20
       register:
         title: "Открой чат"
         subtitle: "для регистрации"

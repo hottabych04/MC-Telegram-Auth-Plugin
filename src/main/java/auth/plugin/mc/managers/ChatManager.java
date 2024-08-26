@@ -17,6 +17,10 @@ public class ChatManager {
 
     private final Player player;
 
+    public void sendWaitMessage(){
+        sendTitle(Messages.TITLE_BEFORE_ALL.asTitle());
+    }
+
     public void sendBeforeRegisterMessage(String regUrl){
         BaseComponent component = new ComponentBuilder()
                 .append(Messages.BEFORE_REGISTER.asString())
@@ -35,10 +39,10 @@ public class ChatManager {
         sendTitle(Messages.TITLE_AFTER_REGISTER.asTitle());
     }
 
-    public void sendBeforeLoginMessage(){
+    public void sendBeforeLoginMessage(String tgUrl){
         BaseComponent component = new ComponentBuilder()
                 .append(Messages.BEFORE_LOGIN.asString())
-                .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/login"))
+                .event(new ClickEvent(ClickEvent.Action.OPEN_URL, tgUrl))
                 .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("Link to the Telegram bot")))
                 .color(ChatColor.AQUA)
                 .bold(true)

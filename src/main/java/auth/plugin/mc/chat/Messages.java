@@ -12,6 +12,7 @@ public enum Messages {
     AFTER_REGISTER("main-message.after.register"),
     AFTER_LOGIN("main-message.after.login"),
 
+    TITLE_BEFORE_ALL("main-title.before.all"),
     TITLE_BEFORE_REGISTER("main-title.before.register"),
     TITLE_BEFORE_LOGIN("main-title.before.login"),
     TITLE_AFTER_REGISTER("main-title.after.register"),

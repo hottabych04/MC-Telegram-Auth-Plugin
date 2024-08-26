@@ -2,31 +2,21 @@ package auth.plugin.mc.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
-import org.bukkit.entity.Player;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @Builder
-public class Account {
+public class AuthAccount {
 
     @JsonProperty("username")
     private String  username;
+
     @JsonProperty("uuid")
     private String  uuid;
 
-    public static Account buildByPlayer(Player player){
-        return Account.builder()
-                .username(player.getName())
-                .uuid(player.getUniqueId().toString())
-                .build();
-    }
+    @JsonProperty("url")
+    private String url;
 
 }
-
-
-
-
-
-

@@ -1,10 +1,9 @@
 package auth.plugin.mc.http;
 
 import auth.plugin.mc.McTelegramAuthPlugin;
-import auth.plugin.mc.events.AsyncLoginEvent;
-import auth.plugin.mc.events.AsyncNotAuthEvent;
-import auth.plugin.mc.events.AsyncRegisterEvent;
+import auth.plugin.mc.events.*;
 import auth.plugin.mc.model.Account;
+import auth.plugin.mc.model.AuthAccount;
 import auth.plugin.mc.settings.Settings;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -53,6 +52,30 @@ public class HttpClient {
 
         // log
         plugin.getLogger().info("JavalinPlugin is enabled");
+    }
+
+    private void initRegisterInviteEndpoint(){
+        this.app.post("/register/invite", ctx -> {
+            String jsonResponse = ctx.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            AuthAccount account = objectMapper.readValue(jsonResponse, AuthAccount.class);
+            Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
+            new AsyncRegisterInviteEvent(player, account.getUrl()).callEvt(plugin);
+            ctx.status(HttpStatus.OK);
+            ctx.result("Json was accepted");
+        });
+    }
+
+    private void initLoginInviteEndpoint(){
+        this.app.post("/login/invite", ctx -> {
+            String jsonResponse = ctx.body();
+            ObjectMapper objectMapper = new ObjectMapper();
+            AuthAccount account = objectMapper.readValue(jsonResponse, AuthAccount.class);
+            Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
+            new AsyncLoginInviteEvent(player, account.getUrl()).callEvt(plugin);
+            ctx.status(HttpStatus.OK);
+            ctx.result("Json was accepted");
+        });
     }
 
     private void initRegisterEndpoint(){

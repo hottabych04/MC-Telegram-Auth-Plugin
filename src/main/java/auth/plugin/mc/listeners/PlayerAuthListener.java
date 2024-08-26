@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 public class PlayerAuthListener implements Listener {
@@ -21,10 +20,11 @@ public class PlayerAuthListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent event){
         Player player = event.getPlayer();
+        ChatManager.getInstance(player).sendWaitMessage();
         boolean callEvt = new AsyncJoinRequestEvent(player).callEvt(plugin);
         if (!callEvt) { player.kickPlayer("Failed to call join request send event :(");}
-        String name = player.getName();
-        if (!plugin.getLoginManager().isAuthenticated(name)){
+        String uuid = player.getUniqueId().toString();
+        if (!plugin.getLoginManager().isAuthenticated(uuid)){
             player.setWalkSpeed(0F);
             player.setFlySpeed(0F);
         }
@@ -32,38 +32,46 @@ public class PlayerAuthListener implements Listener {
 
     @EventHandler
     public void onAsyncJoinRequestEvent(AsyncJoinRequestEvent event){
-        Optional<String> regUrl;
         try (Response response = plugin.getClient().sendJoinPostRequest(event.getPlayer())) {
             if (!response.isSuccessful()) {
                 new AsyncNotAuthEvent(event.getPlayer(), "Dont have login response from telegram server :(").callEvt(plugin);
             }
-            regUrl = Optional.of(response.body().string());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-        regUrl.ifPresent(s -> {
-            if (!regUrl.get().isEmpty()){
-                new ChatManager(event.getPlayer()).sendBeforeRegisterMessage(s);
-            } else {
-                new ChatManager(event.getPlayer()).sendBeforeLoginMessage();
-            }
-        });
     }
 
     @EventHandler
-    public void onAsyncRegisterResponseEvent(AsyncRegisterResponseEvent event){
-        plugin.getServer().getScheduler().callSyncMethod(plugin, () -> null);
+    public void onAsyncRegisterInviteEvent(AsyncRegisterInviteEvent event){
+        plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
+
+            ChatManager.getInstance(event.getPlayer()).sendBeforeRegisterMessage(event.getRegistrationUrl());
+
+            return null;
+        }
+        );
+    }
+
+    @EventHandler
+    public void onAsyncLoginInviteEvent(AsyncLoginInviteEvent event){
+        plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
+
+                    ChatManager.getInstance(event.getPlayer()).sendBeforeLoginMessage(event.getLoginUrl());
+
+                    return null;
+
+                }
+        );
     }
 
     @EventHandler
     public void onAsyncLoginEvent(AsyncLoginEvent event){
         Player player = event.getPlayer();
 
-        new AsyncAuthEvent(player).callEvt(plugin);
+        auth(event.getPlayer());
 
         plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
-            new ChatManager(player).sendAfterLoginMessage();
+            ChatManager.getInstance(player).sendAfterLoginMessage();
             return null;
         });
     }
@@ -72,21 +80,19 @@ public class PlayerAuthListener implements Listener {
     public void onAsyncRegisterEvent(AsyncRegisterEvent event){
         Player player = event.getPlayer();
 
-        new AsyncAuthEvent(player).callEvt(plugin);
+        auth(event.getPlayer());
 
         plugin.getServer().getScheduler().callSyncMethod(plugin, () -> {
-            new ChatManager(player).sendAfterRegisterMessage();
+            ChatManager.getInstance(player).sendAfterRegisterMessage();
             return null;
         });
     }
 
-    @EventHandler
-    public void onAsyncAuthEvent(AsyncAuthEvent event){
-        Player player = event.getPlayer();
+    private void auth(Player player){
 
         if (player == null || !player.isOnline()) return;
 
-        plugin.getLoginManager().setAuthenticated(player.getName());
+        plugin.getLoginManager().setAuthenticated(player.getUniqueId().toString());
         player.setWalkSpeed(0.2F);
         player.setFlySpeed(0.1F);
     }
