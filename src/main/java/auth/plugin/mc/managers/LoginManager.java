@@ -1,28 +1,27 @@
 package auth.plugin.mc.managers;
 
-import lombok.NonNull;
-
-import java.util.HashSet;
+import auth.plugin.mc.util.trie.Trie;
+import org.jetbrains.annotations.NotNull;
 
 public class LoginManager {
 
-    private final HashSet<String> logged = new HashSet<>();
+    private final Trie logged = new Trie();
 
-    public void cleanup(@NonNull String name) {
+    public void cleanup(@NotNull String name) {
         synchronized (logged) {
             logged.remove(name);
         }
     }
 
-    public void setAuthenticated(@NonNull String name) {
+    public void setAuthenticated(@NotNull String name) {
         synchronized (logged) {
             logged.add(name);
         }
     }
 
-    public boolean isAuthenticated(@NonNull String name) {
+    public boolean isAuthenticated(@NotNull String name) {
         synchronized (logged) {
-            return logged.contains(name);
+            return logged.find(name);
         }
     }
 }
