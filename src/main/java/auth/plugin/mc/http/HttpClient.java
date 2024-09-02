@@ -50,6 +50,10 @@ public class HttpClient {
 
         initNotAuthEndpoint();
 
+        initRegisterInviteEndpoint();
+
+        initLoginInviteEndpoint();
+
         // log
         plugin.getLogger().info("JavalinPlugin is enabled");
     }
@@ -62,7 +66,6 @@ public class HttpClient {
             Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
             new AsyncRegisterInviteEvent(player, account.getUrl()).callEvt(plugin);
             ctx.status(HttpStatus.OK);
-            ctx.result("Json was accepted");
         });
     }
 
@@ -74,7 +77,6 @@ public class HttpClient {
             Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
             new AsyncLoginInviteEvent(player, account.getUrl()).callEvt(plugin);
             ctx.status(HttpStatus.OK);
-            ctx.result("Json was accepted");
         });
     }
 
@@ -86,7 +88,6 @@ public class HttpClient {
             Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
             new AsyncRegisterEvent(player).callEvt(plugin);
             ctx.status(HttpStatus.OK);
-            ctx.result("Json was accepted");
         });
     }
 
@@ -98,7 +99,6 @@ public class HttpClient {
             Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
             new AsyncLoginEvent(player).callEvt(plugin);
             ctx.status(HttpStatus.OK);
-            ctx.result("Json was accepted");
         });
     }
 
@@ -110,7 +110,6 @@ public class HttpClient {
             Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
             new AsyncNotAuthEvent(player, "Authorization is not success :(").callEvt(plugin);
             ctx.status(HttpStatus.OK);
-            ctx.result("Json was accepted");
         });
     }
 

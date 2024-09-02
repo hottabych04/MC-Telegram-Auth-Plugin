@@ -92,7 +92,7 @@ public class PlayerAuthListener implements Listener {
 
         if (player == null || !player.isOnline()) return;
 
-        plugin.getLoginManager().setAuthenticated(player.getUniqueId().toString());
+        plugin.getLoginManager().setAuthenticated(player.getName());
         player.setWalkSpeed(0.2F);
         player.setFlySpeed(0.1F);
     }
