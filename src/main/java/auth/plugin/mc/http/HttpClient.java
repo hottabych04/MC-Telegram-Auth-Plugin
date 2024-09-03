@@ -27,83 +27,80 @@ public class HttpClient {
 
     public HttpClient(@NonNull McTelegramAuthPlugin plugin){
         this.plugin = plugin;
-        // Temporarily switch the plugin classloader to load Javalin.
+
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
 
         Thread.currentThread().setContextClassLoader(plugin.getClass().getClassLoader());
-        // Create a Javalin instance.
+
         this.app = Javalin.create().start(Settings.CLIENT_PORT.asInt(8080));
 
         this.client = new OkHttpClient.Builder()
                 .readTimeout(30, TimeUnit.SECONDS)
                 .build();
 
-        // Restore default loader.
         Thread.currentThread().setContextClassLoader(classLoader);
-        // The created instance can be used outside the class loader.
 
-
-        //Initialization endpoints for authentication
-        initLoginEndpoint();
-
-        initRegisterEndpoint();
+        initAuthEndpoint();
 
         initNotAuthEndpoint();
 
-        initRegisterInviteEndpoint();
+        initAuthInviteEndpoint();
 
-        initLoginInviteEndpoint();
-
-        // log
         plugin.getLogger().info("JavalinPlugin is enabled");
     }
 
-    private void initRegisterInviteEndpoint(){
-        this.app.post("/register/invite", ctx -> {
+    private void initAuthInviteEndpoint(){
+        this.app.post("/auth/invite", ctx -> {
+            String action = ctx.queryParam("action");
+
             String jsonResponse = ctx.body();
             ObjectMapper objectMapper = new ObjectMapper();
             AuthAccount account = objectMapper.readValue(jsonResponse, AuthAccount.class);
             Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
-            new AsyncRegisterInviteEvent(player, account.getUrl()).callEvt(plugin);
+
+            switch (action) {
+                case "login":
+                    new AsyncLoginInviteEvent(player, account.getUrl()).callEvt(plugin);
+                    break;
+                case "register":
+                    new AsyncRegisterInviteEvent(player, account.getUrl()).callEvt(plugin);
+                    break;
+                default:
+                    ctx.status(HttpStatus.BAD_REQUEST);
+                    return;
+            }
+
             ctx.status(HttpStatus.OK);
         });
     }
 
-    private void initLoginInviteEndpoint(){
-        this.app.post("/login/invite", ctx -> {
-            String jsonResponse = ctx.body();
-            ObjectMapper objectMapper = new ObjectMapper();
-            AuthAccount account = objectMapper.readValue(jsonResponse, AuthAccount.class);
-            Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
-            new AsyncLoginInviteEvent(player, account.getUrl()).callEvt(plugin);
-            ctx.status(HttpStatus.OK);
-        });
-    }
+    private void initAuthEndpoint(){
+        this.app.post("/auth", ctx -> {
+            String action = ctx.queryParam("action");
 
-    private void initRegisterEndpoint(){
-        this.app.post("/register", ctx -> {
-            String jsonResponse = ctx.body();
-            ObjectMapper objectMapper = new ObjectMapper();
-            Account account = objectMapper.readValue(jsonResponse, Account.class);
-            Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
-            new AsyncRegisterEvent(player).callEvt(plugin);
-            ctx.status(HttpStatus.OK);
-        });
-    }
-
-    private void initLoginEndpoint(){
-        this.app.post("/login", ctx -> {
             String jsonResponse = ctx.body();
             ObjectMapper objectMapper = new ObjectMapper();
             Account account = objectMapper.readValue(jsonResponse, Account.class);
             Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
-            new AsyncLoginEvent(player).callEvt(plugin);
+
+            switch (action) {
+                case "login":
+                    new AsyncLoginEvent(player).callEvt(plugin);
+                    break;
+                case "register":
+                    new AsyncRegisterEvent(player).callEvt(plugin);
+                    break;
+                default:
+                    ctx.status(HttpStatus.BAD_REQUEST);
+                    return;
+            }
+
             ctx.status(HttpStatus.OK);
         });
     }
 
     private void initNotAuthEndpoint(){
-        this.app.post("/not/auth", ctx -> {
+        this.app.post("/auth/not", ctx -> {
             String jsonResponse = ctx.body();
             ObjectMapper objectMapper = new ObjectMapper();
             Account account = objectMapper.readValue(jsonResponse, Account.class);
