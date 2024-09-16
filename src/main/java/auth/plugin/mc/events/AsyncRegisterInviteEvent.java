@@ -10,10 +10,13 @@ public class AsyncRegisterInviteEvent extends CustomEvent {
 
     private final String registrationUrl;
 
-    public AsyncRegisterInviteEvent(Player player, String registerUrl){
+    private final String base64QrCode;
+
+    public AsyncRegisterInviteEvent(Player player, String url, String qrCode){
         super(true);
         this.player = player;
-        this.registrationUrl = registerUrl;
+        this.registrationUrl = url;
+        this.base64QrCode = qrCode;
     }
 
 }

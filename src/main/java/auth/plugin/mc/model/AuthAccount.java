@@ -19,4 +19,7 @@ public class AuthAccount {
     @JsonProperty("url")
     private String url;
 
+    @JsonProperty("qrCode")
+    private String qrCode;
+
 }

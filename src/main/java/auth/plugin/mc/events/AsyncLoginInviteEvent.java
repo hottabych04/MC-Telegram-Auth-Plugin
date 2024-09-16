@@ -10,10 +10,13 @@ public class AsyncLoginInviteEvent extends CustomEvent {
 
     private final String loginUrl;
 
-    public AsyncLoginInviteEvent(Player player, String loginUrl){
+    private final String base64QrCode;
+
+    public AsyncLoginInviteEvent(Player player, String regUrl, String base64QrCode){
         super(true);
         this.player = player;
-        this.loginUrl = loginUrl;
+        this.loginUrl = regUrl;
+        this.base64QrCode = base64QrCode;
     }
 
 }

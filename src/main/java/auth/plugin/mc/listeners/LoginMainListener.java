@@ -1,6 +1,7 @@
 package auth.plugin.mc.listeners;
 
 import auth.plugin.mc.McTelegramAuthPlugin;
+import auth.plugin.mc.util.QrCodeUtil;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -35,7 +36,10 @@ public class LoginMainListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
+        player.setWalkSpeed(0F);
+        player.setFlySpeed(0F);
         plugin.getLoginManager().cleanup(player.getName());
+        QrCodeUtil.deleteQrCode(player);
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -90,7 +94,8 @@ public class LoginMainListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPlayerInteract(PlayerInteractEvent event) {
-        String name = event.getPlayer().getName();
+        Player player = event.getPlayer();
+        String name = player.getName();
         if (!plugin.getLoginManager().isAuthenticated(name)) event.setCancelled(true);
     }
 

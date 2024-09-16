@@ -60,10 +60,10 @@ public class HttpClient {
 
             switch (action) {
                 case "login":
-                    new AsyncLoginInviteEvent(player, account.getUrl()).callEvt(plugin);
+                    new AsyncLoginInviteEvent(player, account.getUrl(), account.getQrCode()).callEvt(plugin);
                     break;
                 case "register":
-                    new AsyncRegisterInviteEvent(player, account.getUrl()).callEvt(plugin);
+                    new AsyncRegisterInviteEvent(player, account.getUrl(), account.getQrCode()).callEvt(plugin);
                     break;
                 default:
                     ctx.status(HttpStatus.BAD_REQUEST);
