@@ -1,15 +1,16 @@
 package auth.plugin.mc.managers;
 
-import auth.plugin.mc.util.trie.Trie;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashSet;
 
 public class LoginManager {
 
-    private final Trie logged = new Trie();
+    private final HashSet<String> logged = new HashSet<>();
 
-    public void cleanup(@NotNull String name) {
+    public boolean cleanup(@NotNull String name) {
         synchronized (logged) {
-            logged.remove(name);
+            return logged.remove(name);
         }
     }
 
@@ -21,7 +22,7 @@ public class LoginManager {
 
     public boolean isAuthenticated(@NotNull String name) {
         synchronized (logged) {
-            return logged.find(name);
+            return logged.contains(name);
         }
     }
 }

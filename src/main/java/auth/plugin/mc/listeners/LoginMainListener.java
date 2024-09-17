@@ -36,9 +36,7 @@ public class LoginMainListener implements Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent event){
         Player player = event.getPlayer();
-        player.setWalkSpeed(0F);
-        player.setFlySpeed(0F);
-        plugin.getLoginManager().cleanup(player.getName());
+        System.out.println(plugin.getLoginManager().cleanup(player.getName()));
         QrCodeUtil.deleteQrCode(player);
     }
 

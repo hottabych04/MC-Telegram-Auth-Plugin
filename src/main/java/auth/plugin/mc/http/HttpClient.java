@@ -103,16 +103,19 @@ public class HttpClient {
         this.app.post("/auth/not", ctx -> {
             String jsonResponse = ctx.body();
             ObjectMapper objectMapper = new ObjectMapper();
-            Account account = objectMapper.readValue(jsonResponse, Account.class);
-            Player player = plugin.getServer().getPlayer(UUID.fromString(account.getUuid()));
+            String uuid = objectMapper.readValue(jsonResponse, String.class);
+            Player player = plugin.getServer().getPlayer(UUID.fromString(uuid));
             new AsyncNotAuthEvent(player, "Authorization is not success :(").callEvt(plugin);
             ctx.status(HttpStatus.OK);
         });
     }
 
     public Response sendJoinPostRequest(Player player) throws IOException {
-        String requestUrl = getHttpAddress(Settings.SERVER_IP.asString(""),
-                Settings.SERVER_PORT.asInt(8080), "/api/v1/auth/join");
+        String requestUrl = getHttpAddress(
+                Settings.SERVER_IP.asString(""),
+                Settings.SERVER_PORT.asInt(8080),
+                "/api/v1/auth/join"
+        );
 
         MediaType mediaType = MediaType.get("application/json");
 
@@ -135,11 +138,6 @@ public class HttpClient {
         Response response = client.newCall(request).execute();
 
         return response;
-    }
-
-    private static String getHttpAddress(String ip,
-                                        int port){
-        return getHttpAddress(ip, port, "/");
     }
 
     private static String getHttpAddress(String ip,
